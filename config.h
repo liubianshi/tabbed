@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const char font[]        = "Wenquanyi Micro Hei Mono:size=9";
+static const char font[]        = "Monospace:size=9";
 static const char* normbgcolor  = "#222222";
 static const char* normfgcolor  = "#cccccc";
 static const char* selbgcolor   = "#555555";
@@ -13,7 +13,7 @@ static const char after[]       = ">";
 static const char titletrim[]   = "...";
 static const int  tabwidth      = 200;
 static const Bool foreground    = True;
-static       Bool urgentswitch  = False;
+static       Bool urgentswitch  = True;
 
 /*
  * Where to place a new tab when it is opened. When npisrelative is True,
@@ -26,8 +26,8 @@ static Bool npisrelative  = False;
 #define SETPROP(p) { \
         .v = (char *[]){ "/bin/sh", "-c", \
                 "prop=\"`xwininfo -children -id $1 | grep '^     0x' |" \
-                "sed -e's@^ *\\(0x[0-9a-f]*\\) \"\\([^\"]*\\)\".*@\\1 \\2@' |" \
-                "xargs -0 printf %b | dmenu -l 10 -w $1`\" &&" \
+                "perl -pe 's/^\\s+(0x[0-9a-f]+)\\s+\"(.*)\":.*$/\\1 \\2/' |" \
+                "xargs -0 printf %b | fmenu`\" &&" \
                 "xprop -id $1 -f $0 8s -set $0 \"$prop\"", \
                 p, winid, NULL \
         } \
@@ -45,7 +45,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,     XK_k,      movetab,     { .i = +1 } },
 	{ MODKEY,               XK_Tab,    rotate,      { .i = 0 } },
 
-	{ MODKEY,               XK_d,  spawn,       SETPROP("_TABBED_SELECT_TAB") },
+	{ MODKEY,               XK_d,      spawn,       SETPROP("_TABBED_SELECT_TAB") },
 	{ MODKEY,               XK_1,      move,        { .i = 0 } },
 	{ MODKEY,               XK_2,      move,        { .i = 1 } },
 	{ MODKEY,               XK_3,      move,        { .i = 2 } },
@@ -59,8 +59,8 @@ static Key keys[] = {
 
 	{ MODKEY,               XK_q,      killclient,  { 0 } },
 
-	{ MODKEY,               XK_u,      focusurgent, { 0 } },
-	{ MODKEY|ShiftMask,     XK_u,      toggle,      { .v = (void*) &urgentswitch } },
+	//{ MODKEY,               XK_u,      focusurgent, { 0 } },
+	//{ MODKEY|ShiftMask,     XK_u,      toggle,      { .v = (void*) &urgentswitch } },
 
 	{ 0,                    XK_F11,    fullscreen,  { 0 } },
 };
